@@ -15,3 +15,32 @@ class Post(db.Model):
 
     author = relationship("User", back_populates="posts")
     likes = relationship("User", secondary=table_name_prefix_with_schema + "likes", back_populates="liked_posts")
+
+    @classmethod
+    def get_by_id(cls, post_id: int):
+        return cls.query.filter_by(id=post_id).first()
+
+    @classmethod
+    def get_all(cls):
+        return cls.query.all()
+
+    @property
+    def json(self):
+        return {
+            "id": self.id,
+            "content": self.content,
+            "date_created": str(self.date_created),
+            "author_id": self.author_id,
+            "author_username": self.author.username,
+            "likes": [like.user_id for like in self.likes]
+        }
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return True

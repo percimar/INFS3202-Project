@@ -18,5 +18,6 @@ class LoginResource(Resource):
 
         return {
                    "message": "Logged In",
-                   **user.json
+                   **user.json,
+                   "last_login": str(user.last_login)
                }, HTTPStatus.OK

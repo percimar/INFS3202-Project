@@ -8,7 +8,8 @@ from models import User, Follower
 
 
 class UsersResource(Resource):
-    def get(self, user_id: int):
+    @staticmethod
+    def get(user_id: int):
         user = User.get_by_id(user_id)
         if user is None:
             return {"message": f"User with id {user_id} not found."}, HTTPStatus.NOT_FOUND
@@ -16,7 +17,8 @@ class UsersResource(Resource):
 
 
 class UsersListResource(Resource):
-    def get(self):
+    @staticmethod
+    def get():
         partial_name = request.args["name"] if "name" in request.args else ""
         matches = User.get_by_partial_username(partial_name)
         return {
@@ -25,7 +27,11 @@ class UsersListResource(Resource):
 
 
 class FollowResource(Resource):
-    def post(self, user_id: int):
+    @staticmethod
+    def post(user_id: int):
+        if "user" not in session:
+            return {"message": "Please login first."}, HTTPStatus.UNAUTHORIZED
+
         logged_in_id = session["user"]
         if logged_in_id == user_id:
             return {"message": "Cannot follow yourself."}, HTTPStatus.BAD_REQUEST
@@ -41,7 +47,8 @@ class FollowResource(Resource):
 
 
 class FollowerListResource(Resource):
-    def get(self, user_id: int):
+    @staticmethod
+    def get(user_id: int):
         user = User.get_by_id(user_id)
         if user is None:
             return {"message": f"User with id {user_id} not found."}, HTTPStatus.NOT_FOUND
@@ -54,7 +61,8 @@ class FollowerListResource(Resource):
 
 
 class FollowingListResource(Resource):
-    def get(self, user_id: int):
+    @staticmethod
+    def get(user_id: int):
         user = User.get_by_id(user_id)
         if user is None:
             return {"message": f"User with id {user_id} not found."}, HTTPStatus.NOT_FOUND

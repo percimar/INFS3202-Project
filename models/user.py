@@ -60,6 +60,5 @@ class User(db.Model):
     def json(self):
         return {
             "user_id": self.id,
-            "username": self.username,
-            "last_login": str(self.last_login)
+            "username": self.username
         }
