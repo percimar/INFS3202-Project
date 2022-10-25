@@ -1,9 +1,17 @@
-from datetime import datetime
+from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+
+from db import db, table_name_prefix, table_name_prefix_with_schema
 
 
-class Post:
-    def __init__(self, post_id: int, user_id: int, content: str, date_created: datetime):
-        self.post_id = post_id
-        self.user_id = user_id
-        self.content = content
-        self.date_created = date_created
+class Post(db.Model):
+    __tablename__ = table_name_prefix + "posts"
+    __table_args__ = {"schema": "public"}  # needed for db.drop_all() to work https://stackoverflow.com/a/56499548
+
+    id = Column(Integer, primary_key=True)
+    content = Column(Text())
+    date_created = Column(DateTime(), nullable=False, server_default=db.func.now())
+    author_id = Column(ForeignKey(table_name_prefix_with_schema + 'users.id'), nullable=False)
+
+    author = relationship("User", back_populates="posts")
+    likes = relationship("User", secondary=table_name_prefix_with_schema + "likes", back_populates="liked_posts")

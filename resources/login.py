@@ -1,10 +1,18 @@
+from http import HTTPStatus
+
+from flask import request, session
 from flask_restful import Resource
+
+from models import User
 
 
 class LoginResource(Resource):
-    def post(self, user_name: str):
-        if user_name is None:
-            # return Bad request
-            return
-        # login and update last_login if exists, else register
-        # return logged in user or jwt
+    def post(self):
+        if "user" not in request.form:
+            return {"message": "Please provide a user"}, HTTPStatus.BAD_REQUEST
+        user_name = request.form["user"]
+        user = User.get_or_create_user(user_name)
+        # set a cryptographically secured cookie
+        session["user"] = user.id
+
+        return {"message": "Logged In", "user": user}, HTTPStatus.OK
