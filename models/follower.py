@@ -10,7 +10,16 @@ class Follower(db.Model):
     user_id = Column(ForeignKey(table_name_prefix_with_schema + 'users.id'), primary_key=True)
     following_id = Column(ForeignKey(table_name_prefix_with_schema + 'users.id'), primary_key=True)
 
+    @classmethod
+    def get_record(cls, user_id, following_id):
+        return cls.query.filterBy(user_id=user_id, following_id=following_id).first()
+
     def save(self):
         db.session.add(self)
         db.session.commit()
         return self
+    
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return True

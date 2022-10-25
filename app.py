@@ -8,8 +8,9 @@ from flask_restful import Api
 # noinspection PyUnresolvedReferences
 import models
 from db import db
-from resources import LoginResource, PostsResource, PostsListResource, UsersListResource, UsersResource, FollowResource
-from resources.users import FollowerListResource, FollowingListResource
+from resources import LoginResource, PostsResource, PostsListResource, UsersListResource, UsersResource, \
+    FollowResource, UnfollowResource, FollowerListResource, FollowingListResource, LikeResource, UnlikeResource, \
+    UserLikesResource, PostLikesResource
 
 
 def create_app():
@@ -43,8 +44,13 @@ def register_resources(app):
     api.add_resource(UsersListResource, "/users")
     api.add_resource(UsersResource, "/users/<int:user_id>")
     api.add_resource(FollowResource, "/users/<int:user_id>/follow")
+    api.add_resource(UnfollowResource, "/users/<int:user_id>/unfollow")
     api.add_resource(FollowerListResource, "/users/<int:user_id>/followers")
     api.add_resource(FollowingListResource, "/users/<int:user_id>/following")
+    api.add_resource(LikeResource, "/posts/<int:post_id>/like")
+    api.add_resource(UnlikeResource, "/posts/<int:post_id>/unlike")
+    api.add_resource(UserLikesResource, "/users/<int:user_id>/likes")
+    api.add_resource(PostLikesResource, "/posts/<int:post_id>/likes")
 
 
 if __name__ == '__main__':
