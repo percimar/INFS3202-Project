@@ -40,7 +40,7 @@ class User(db.Model):
 
     @classmethod
     def get_by_partial_username(cls, username):
-        return cls.query.filter(User.username.ilike(f"%{username}%")).all()
+        return cls.query.filter(User.username.ilike(f"%{username}%")).limit(10).all()
 
     @classmethod
     def get_or_create_user(cls, username):

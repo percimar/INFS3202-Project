@@ -24,6 +24,10 @@ class Post(db.Model):
     def get_all(cls):
         return cls.query.all()
 
+    @classmethod
+    def get_by_partial_content(cls, content: str):
+        return cls.query.filter(Post.content.ilike(f"%{content}%")).limit(10).all()
+
     @property
     def json(self):
         return {
