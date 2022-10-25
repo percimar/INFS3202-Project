@@ -9,12 +9,14 @@ from flask_restful import Api
 import models
 from db import db
 from resources import LoginResource, PostsResource, PostsListResource, UsersListResource, UsersResource, FollowResource
+from resources.users import FollowerListResource, FollowingListResource
 
 
 def create_app():
     app = Flask(__name__)
     app.config.update(
         TESTING=True,
+        SECRET_KEY="secret_key_for_generating_sessions_CHANGE_AND_KEEP_SECRET",  # secret key for generating cookies
         SQLALCHEMY_DATABASE_URI='postgresql+psycopg2://infs3202:change_password_here@localhost/infs3202',
         SQLALCHEMY_TRACK_MODIFICATIONS=False
     )
@@ -28,8 +30,7 @@ def create_app():
 def register_extensions(app):
     db.init_app(app)
     with app.app_context():
-        print("Dropping and creating tables")
-        db.drop_all()
+        # db.drop_all()
         db.create_all()
 
 
@@ -42,6 +43,8 @@ def register_resources(app):
     api.add_resource(UsersListResource, "/users")
     api.add_resource(UsersResource, "/users/<int:user_id>")
     api.add_resource(FollowResource, "/users/<int:user_id>/follow")
+    api.add_resource(FollowerListResource, "/users/<int:user_id>/followers")
+    api.add_resource(FollowingListResource, "/users/<int:user_id>/following")
 
 
 if __name__ == '__main__':

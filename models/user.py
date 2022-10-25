@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 
@@ -23,9 +25,9 @@ class User(db.Model):
     followers = relationship(
         "User",
         secondary=table_name_prefix_with_schema + "followers",
-        primaryjoin=id == Follower.user_id,
-        secondaryjoin=id == Follower.following_id,
-        backref="followed_by",
+        primaryjoin=id == Follower.following_id,
+        secondaryjoin=id == Follower.user_id,
+        backref="following",
     )
 
     @classmethod
@@ -34,8 +36,30 @@ class User(db.Model):
 
     @classmethod
     def get_by_username(cls, username):
-        return cls.query.filter_by(username=username).first()
+        return cls.query.filter(User.username.ilike(username)).first()
+
+    @classmethod
+    def get_by_partial_username(cls, username):
+        return cls.query.filter(User.username.ilike(f"%{username}%")).all()
 
     @classmethod
     def get_or_create_user(cls, username):
-        return cls.get_by_username(username)
+        user = cls.get_by_username(username)
+        if user is None:
+            user = User(username=username)
+        else:
+            user.last_login = datetime.now()
+        return user.save()
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self
+
+    @property
+    def json(self):
+        return {
+            "user_id": self.id,
+            "username": self.username,
+            "last_login": str(self.last_login)
+        }

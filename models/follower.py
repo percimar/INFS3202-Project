@@ -9,3 +9,8 @@ class Follower(db.Model):
 
     user_id = Column(ForeignKey(table_name_prefix_with_schema + 'users.id'), primary_key=True)
     following_id = Column(ForeignKey(table_name_prefix_with_schema + 'users.id'), primary_key=True)
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self

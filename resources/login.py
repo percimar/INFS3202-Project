@@ -7,7 +7,8 @@ from models import User
 
 
 class LoginResource(Resource):
-    def post(self):
+    @staticmethod
+    def post():
         if "user" not in request.form:
             return {"message": "Please provide a user"}, HTTPStatus.BAD_REQUEST
         user_name = request.form["user"]
@@ -15,4 +16,7 @@ class LoginResource(Resource):
         # set a cryptographically secured cookie
         session["user"] = user.id
 
-        return {"message": "Logged In", "user": user}, HTTPStatus.OK
+        return {
+                   "message": "Logged In",
+                   **user.json
+               }, HTTPStatus.OK
