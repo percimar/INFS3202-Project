@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Api
 
 # The noinspection comment is needed to prevent PyCharm from removing an unused import
@@ -15,6 +16,7 @@ from resources import LoginResource, PostsResource, PostsListResource, UsersList
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     app.config.update(
         TESTING=True,
         SECRET_KEY="secret_key_for_generating_sessions_CHANGE_AND_KEEP_SECRET",  # secret key for generating cookies
