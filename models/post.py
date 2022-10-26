@@ -32,7 +32,7 @@ class Post(db.Model):
     def get_by_user(cls, user_id: int):
         """Get created posts by user i in order of most recent"""
         return cls.query.filter_by(author_id=user_id).order_by(Post.date_created).limit(10).all()
-    
+
     @classmethod
     def get_by_users(cls, users: [int]):
         """Get created posts by users in list in order of most recent"""
@@ -46,7 +46,7 @@ class Post(db.Model):
             "date_created": str(self.date_created),
             "author_id": self.author_id,
             "author_username": self.author.username,
-            "likes": [like.user_id for like in self.likes]
+            "likes": [user.json for user in self.likes]
         }
 
     def save(self):

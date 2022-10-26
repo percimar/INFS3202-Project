@@ -16,12 +16,8 @@ class SearchResource(Resource):
 
         # If the query string is too small, we don't want to expose all our usernames
         # post matches will be unlikely anyway, it's best not to autocomplete until we have some characters
-        # we're returning OK instead of BAD_REQUEST since there's nothing wrong with the query from a code perspective
         if len(query_string) < 3:
-            return {
-                       "users": [],
-                       "posts": []
-                   }, HTTPStatus.OK
+            return {"message": "Query parameter 'q' is too short."}, HTTPStatus.BAD_REQUEST
 
         user_matches = User.get_by_partial_username(query_string)
         post_matches = Post.get_by_partial_content(query_string)

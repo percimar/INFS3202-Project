@@ -18,7 +18,15 @@ class UsersResource(Resource):
 class UsersListResource(Resource):
     @staticmethod
     def get():
-        partial_name = request.args["name"] if "name" in request.args else ""
+        if "name" not in request.args:
+            return {"message": "Query parameter 'name' is mandatory."}, HTTPStatus.BAD_REQUEST
+
+        partial_name = request.args["name"]
+
+        # If the name is too small, we don't want to expose all our usernames
+        if len(partial_name) < 3:
+            return {"message": "Query parameter 'name' too short."}, HTTPStatus.BAD_REQUEST
+
         matches = User.get_by_partial_username(partial_name)
         return {
                    "users": [user.json for user in matches]

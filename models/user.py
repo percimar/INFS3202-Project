@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship
 
 from db import db, table_name_prefix, table_name_prefix_with_schema
@@ -50,6 +51,15 @@ class User(db.Model):
         else:
             user.last_login = datetime.now()
         return user.save()
+
+    @classmethod
+    def save_users(cls, users):
+        for user in users:
+            try:
+                user.save()
+            except IntegrityError:
+                # If username already exists, we rollback the insert to avoid duplicate users
+                db.session.rollback()
 
     def save(self):
         db.session.add(self)
