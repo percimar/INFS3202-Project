@@ -12,13 +12,13 @@ class Follower(db.Model):
 
     @classmethod
     def get_record(cls, user_id, following_id):
-        return cls.query.filterBy(user_id=user_id, following_id=following_id).first()
+        return cls.query.filter_by(user_id=user_id, following_id=following_id).first()
 
     def save(self):
         db.session.add(self)
         db.session.commit()
         return self
-    
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()

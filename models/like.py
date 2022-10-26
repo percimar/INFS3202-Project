@@ -12,7 +12,7 @@ class Like(db.Model):
 
     @classmethod
     def get_record(cls, user_id, post_id):
-        return cls.query.filterBy(user_id=user_id, post_id=post_id).first()
+        return cls.query.filter_by(user_id=user_id, post_id=post_id).first()
 
     def save(self):
         db.session.add(self)

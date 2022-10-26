@@ -28,6 +28,16 @@ class Post(db.Model):
     def get_by_partial_content(cls, content: str):
         return cls.query.filter(Post.content.ilike(f"%{content}%")).limit(10).all()
 
+    @classmethod
+    def get_by_user(cls, user_id: int):
+        """Get created posts by user i in order of most recent"""
+        return cls.query.filter_by(author_id=user_id).order_by(Post.date_created).limit(10).all()
+    
+    @classmethod
+    def get_by_users(cls, users: [int]):
+        """Get created posts by users in list in order of most recent"""
+        return cls.query.filter(Post.author_id.in_(users)).order_by(Post.date_created).limit(10).all()
+
     @property
     def json(self):
         return {

@@ -3,4 +3,4 @@ from .likes import LikeResource, UnlikeResource, UserLikesResource, PostLikesRes
 from .login import LoginResource
 from .posts import PostsResource, PostsListResource
 from .search import SearchResource
-from .users import UsersResource, UsersListResource
+from .users import UsersResource, UsersListResource, FeedResource, UserPostsResource

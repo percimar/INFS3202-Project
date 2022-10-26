@@ -11,7 +11,7 @@ import models
 from db import db
 from resources import LoginResource, PostsResource, PostsListResource, UsersListResource, UsersResource, \
     FollowResource, UnfollowResource, FollowerListResource, FollowingListResource, LikeResource, UnlikeResource, \
-    UserLikesResource, PostLikesResource, SearchResource
+    UserLikesResource, PostLikesResource, SearchResource, FeedResource, UserPostsResource
 
 
 def create_app():
@@ -45,6 +45,8 @@ def register_resources(app):
     api.add_resource(PostsResource, "/posts/<int:post_id>")
     api.add_resource(UsersListResource, "/users")
     api.add_resource(UsersResource, "/users/<int:user_id>")
+    api.add_resource(FeedResource, "/users/<int:user_id>/feed")
+    api.add_resource(UserPostsResource, "/users/<int:user_id>/posts")
     api.add_resource(FollowResource, "/users/<int:user_id>/follow")
     api.add_resource(UnfollowResource, "/users/<int:user_id>/unfollow")
     api.add_resource(FollowerListResource, "/users/<int:user_id>/followers")

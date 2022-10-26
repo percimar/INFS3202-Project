@@ -24,7 +24,6 @@ class LoginResource(Resource):
         session["user"] = user.id
 
         return {
-                   "message": "Logged In",
                    **user.json,
                    "last_login": str(user.last_login)
                }, HTTPStatus.OK
