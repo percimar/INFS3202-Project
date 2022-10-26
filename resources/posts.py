@@ -1,3 +1,4 @@
+from datetime import datetime
 from http import HTTPStatus
 
 from flask import session, request
@@ -66,6 +67,19 @@ class PostsResource(Resource):
 class PostsListResource(Resource):
     @staticmethod
     def get():
+        if "before" in request.args:
+            before = request.args["before"]
+            try:
+                timestamp = datetime.fromisoformat(before)
+                posts = Post.get_all(timestamp)
+                return {
+                           "posts": [post.json for post in posts]
+                       }, HTTPStatus.OK
+            except ValueError:
+                return {
+                           "message": "Query parameter 'before' needs to be a valid iso datetime string."
+                       }, HTTPStatus.BAD_REQUEST
+
         posts = Post.get_all()
         return {
                    "posts": [post.json for post in posts]

@@ -21,22 +21,35 @@ class Post(db.Model):
         return cls.query.filter_by(id=post_id).first()
 
     @classmethod
-    def get_all(cls):
-        return cls.query.all()
+    def get_all(cls, timestamp=None):
+        query = cls.query.order_by(Post.date_created.desc())
+        if timestamp is not None:
+            query = query.filter(Post.date_created.__lt__(timestamp))
+        return query.limit(5).all()
 
     @classmethod
     def get_by_partial_content(cls, content: str):
-        return cls.query.filter(Post.content.ilike(f"%{content}%")).limit(10).all()
+        return cls.query.filter(Post.content.ilike(f"%{content}%")).order_by(Post.date_created.desc()).limit(10).all()
 
     @classmethod
-    def get_by_user(cls, user_id: int):
+    def get_by_user(cls, user_id: int, timestamp=None):
         """Get created posts by user i in order of most recent"""
-        return cls.query.filter_by(author_id=user_id).order_by(Post.date_created).limit(10).all()
+        query = cls.query.filter_by(author_id=user_id)
+
+        if timestamp is not None:
+            query = query.filter(Post.date_created.__lt__(timestamp))
+
+        return query.order_by(Post.date_created.desc()).all()
 
     @classmethod
-    def get_by_users(cls, users: [int]):
+    def get_by_users(cls, users: [int], timestamp=None):
         """Get created posts by users in list in order of most recent"""
-        return cls.query.filter(Post.author_id.in_(users)).order_by(Post.date_created).limit(10).all()
+        query = cls.query.filter(Post.author_id.in_(users))
+
+        if timestamp is not None:
+            query = query.filter(Post.date_created.__lt__(timestamp))
+            
+        return query.order_by(Post.date_created.desc()).limit(5).all()
 
     @property
     def json(self):

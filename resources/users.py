@@ -1,3 +1,4 @@
+from datetime import datetime
 from http import HTTPStatus
 
 from flask import request
@@ -41,6 +42,19 @@ class FeedResource(Resource):
             return {"message": f"User with id {user_id} not found."}, HTTPStatus.NOT_FOUND
 
         following = user.following
+
+        if "before" in request.args:
+            before = request.args["before"]
+            try:
+                timestamp = datetime.fromisoformat(before)
+                posts = Post.get_by_users([user.id for user in following], timestamp)
+                return {
+                           "posts": [post.json for post in posts]
+                       }, HTTPStatus.OK
+            except ValueError:
+                return {
+                           "message": "Query parameter 'before' needs to be a valid iso datetime string."
+                       }, HTTPStatus.BAD_REQUEST
 
         posts = Post.get_by_users([user.id for user in following])
         return {

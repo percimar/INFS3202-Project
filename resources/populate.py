@@ -4,7 +4,9 @@ from http import HTTPStatus
 from flask import request
 from flask_restful import Resource
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
+from sqlalchemy.exc import IntegrityError
 
+from db import db
 from models import User, Post, Follower, Like
 
 
@@ -39,7 +41,10 @@ class PopulateResource(Resource):
 
         big_brother = User.get_by_username("BigBrother")
         for user in users:
-            Follower(user_id=big_brother.id, following_id=User.get_by_username(user.username).id).save()
+            try:
+                Follower(user_id=big_brother.id, following_id=User.get_by_username(user.username).id).save()
+            except IntegrityError:
+                db.session.rollback()
 
         p1 = Post(author_id=User.get_by_username("TheLoremIpsum").id,
                   content="Proin congue risus volutpat metus dignissim, nec elementum lacus tristique. "
@@ -47,7 +52,9 @@ class PopulateResource(Resource):
                           "Vestibulum pulvinar imperdiet est, vel semper arcu interdum vitae. Donec "
                           "fermentum massa et justo viverra placerat. Mauris malesuada ornare semper. Morbi "
                           "sodales sit amet erat eu efficitur. Proin mauris sem, efficitur sit amet dictum "
-                          "eu, aliquam ut ligula. Nulla dictum.").save()
+                          "eu, aliquam ut ligula. Nulla dictum.",
+                  date_created=datetime(2022, 10, 22)
+                  ).save()
 
         p2 = Post(author_id=User.get_by_username("TheLoremIpsum").id,
                   content="Cras augue dui, fringilla vitae neque sit amet, ullamcorper suscipit metus. "
@@ -55,14 +62,16 @@ class PopulateResource(Resource):
                           "blandit, sapien augue vehicula tortor, a tempor elit nulla eu nunc. Aenean "
                           "finibus nisl ut suscipit commodo. Donec consectetur hendrerit volutpat. Praesent "
                           "in tempor eros. In vehicula odio in est aliquam pellentesque. Mauris sit amet "
-                          "elementum turpis, eget faucibus.").save()
+                          "elementum turpis, eget faucibus.",
+                  date_created=datetime(2022, 10, 23)).save()
 
         p3 = Post(author_id=User.get_by_username("TheLoremIpsum").id,
                   content="Nulla molestie nisi at elit pulvinar, et rhoncus dolor mattis. Etiam accumsan "
                           "libero eu lorem tempor consectetur. Donec a congue felis. Class aptent taciti "
                           "sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce ut "
                           "erat pretium, dignissim tellus ut, egestas sapien. Praesent molestie erat vel "
-                          "felis interdum, id congue libero varius. In in dui vitae ante ornare.").save()
+                          "felis interdum, id congue libero varius. In in dui vitae ante ornare.",
+                  date_created=datetime(2022, 10, 24)).save()
 
         p4 = Post(author_id=User.get_by_username("TheLoremIpsum").id,
                   content="Maecenas lectus lacus, ultricies sed ultricies iaculis, gravida ac tellus. "
@@ -70,14 +79,16 @@ class PopulateResource(Resource):
                           "gravida eu. Donec id velit nisi. Fusce sodales urna luctus augue aliquet "
                           "placerat. Fusce imperdiet vehicula lorem, commodo varius orci euismod eu. Sed "
                           "ultricies pretium erat id gravida. Vestibulum ante ipsum primis in faucibus orci "
-                          "luctus et ultrices posuere.").save()
+                          "luctus et ultrices posuere.",
+                  date_created=datetime(2022, 10, 25)).save()
 
         p5 = Post(author_id=User.get_by_username("TheLoremIpsum").id,
                   content="In viverra varius dapibus. Mauris vehicula orci ut hendrerit dignissim. Donec "
                           "ante arcu, maximus posuere sagittis quis, aliquam eu ligula. Integer volutpat "
                           "tortor iaculis elit auctor congue. Donec eleifend id augue eu ultrices. "
                           "Pellentesque eget faucibus nisl. Etiam a maximus nibh, eget venenatis quam. Etiam "
-                          "elementum tempor ante non sodales. Nam semper venenatis augue et.").save()
+                          "elementum tempor ante non sodales. Nam semper venenatis augue et.",
+                  date_created=datetime(2022, 10, 26, 2, 10, 24)).save()
 
         p6 = Post(author_id=User.get_by_username("Asmar").id,
                   content="Why is it that a software project ALWAYS takes so much longer than you expect? "
@@ -91,7 +102,8 @@ class PopulateResource(Resource):
                           "the more you realise that 14 of those don't work, 1 of those causes behaviour so "
                           "unexpected that you consider quitting programming forever, and one of them works "
                           "just well enough for you to be happy after hours of trial and error and make a "
-                          "pact to never touch that piece of code again.").save()
+                          "pact to never touch that piece of code again.",
+                  date_created=datetime(2022, 10, 25, 11, 59, 59)).save()
 
         p6 = Post(author_id=User.get_by_username("Asmar").id,
                   content="In case it wasn't clear in my previous post, I was referring to this project, "
@@ -100,7 +112,8 @@ class PopulateResource(Resource):
                           "documentation cover to cover, because god forbid they document something that you "
                           "could find in the SQLAlchemy documentation. Instead you're constantly hopping "
                           "between Flask-SQLAlchemy documentation and SQLAlchemy documentation to figure out "
-                          "different levels of abstraction you're working at.").save()
+                          "different levels of abstraction you're working at.",
+                  date_created=datetime(2022, 10, 26, 1, 1, 1)).save()
 
         p7 = Post(author_id=User.get_by_username("TimeTraveller").id,
                   content="This post is from the past, a past you will never know, for the living records of "
